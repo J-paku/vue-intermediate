@@ -171,3 +171,99 @@ curl -X GET "https://api.powerbi.com/v1.0/myorg/reports/report-12345/Export" \
 	4.	Power BI API를 호출하여 PBIX 파일을 다운로드.
 
 이 방식은 CLI 환경에서도 사용자 계정만으로 Power BI 보고서를 다운로드할 수 있는 방법이며, 서비스 프린시펄을 활성화하지 않아도 실행 가능합니다.
+
+
+
+세ㄱㄱ스
+
+서비스 프린시펄이 꺼져 있는 경우, **사용자 계정 기반 로그인(Delegated Permission)**을 사용하여 Power BI 보고서를 다운로드할 수 있습니다. 아래 절차를 따르면 CLI에서 사용자 계정 로그인 방식으로 PBIX 파일을 다운로드할 수 있습니다.
+
+✅ Power BI 사용자 계정 로그인 방식으로 PBIX 파일 다운로드하기
+
+1️⃣ OAuth 2.0 디바이스 코드 인증으로 사용자 로그인
+
+우선, **사용자 계정(조직 계정, AAD 계정)**을 통해 인증해야 합니다.
+
+curl -X POST https://login.microsoftonline.com/common/oauth2/devicecode \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id={client_id}" \
+  -d "scope=https://graph.microsoft.com/.default"
+
+이 명령어를 실행하면 응답에 device_code와 verification_uri가 포함됩니다.
+
+{
+  "device_code": "xxxxxxxxxxxxxxx",
+  "user_code": "ABCD-1234",
+  "verification_uri": "https://microsoft.com/devicelogin",
+  "expires_in": 900,
+  "interval": 5
+}
+
+	•	브라우저에서 verification_uri (예: https://microsoft.com/devicelogin)에 접속
+	•	터미널에서 받은 user_code를 입력
+	•	조직 계정(Azure AD 계정)으로 로그인
+
+로그인이 완료되면, 해당 계정으로 Power BI API 호출이 가능해집니다.
+
+2️⃣ 액세스 토큰 발급
+
+디바이스 코드로 로그인한 후, 액세스 토큰을 발급받습니다.
+
+curl -X POST https://login.microsoftonline.com/common/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=device_code" \
+  -d "client_id={client_id}" \
+  -d "device_code={device_code}"
+
+성공하면 다음과 같은 JSON 응답을 받습니다.
+
+{
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci..."
+}
+
+	•	여기서 "access_token" 값을 복사하여 Power BI API 호출에 사용합니다.
+
+3️⃣ Power BI에서 보고서 목록 조회
+
+보고서 ID(report_id)를 찾기 위해 Power BI API를 호출합니다.
+
+curl -X GET "https://api.powerbi.com/v1.0/myorg/reports" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json"
+
+이 명령어를 실행하면 조직 내 Power BI 보고서 목록이 반환됩니다.
+
+예제 응답:
+
+{
+  "value": [
+    {
+      "id": "report-12345",
+      "name": "Sales Report",
+      "webUrl": "https://app.powerbi.com/reports/report-12345"
+    }
+  ]
+}
+
+👉 id 값을 복사하여 다음 단계에서 사용합니다.
+
+4️⃣ PBIX 파일 다운로드
+
+이제 report_id를 사용하여 PBIX 파일을 다운로드합니다.
+
+curl -X GET "https://api.powerbi.com/v1.0/myorg/reports/report-12345/Export" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json" \
+  --output report.pbix
+
+👉 실행이 성공하면 report.pbix 파일이 현재 디렉토리에 다운로드됩니다.
+
+📌 정리
+	1.	디바이스 코드 인증 방식으로 사용자 로그인.
+	2.	액세스 토큰을 발급받음.
+	3.	Power BI 보고서 목록을 조회하여 report_id를 확인.
+	4.	Power BI API를 호출하여 PBIX 파일을 다운로드.
+
+이 방식은 CLI 환경에서도 사용자 계정만으로 Power BI 보고서를 다운로드할 수 있는 방법이며, 서비스 프린시펄을 활성화하지 않아도 실행 가능합니다.

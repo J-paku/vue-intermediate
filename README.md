@@ -1,3 +1,73 @@
+내 작업 영역(My Workspace)에서의 권한을 확인하는 방법은 Power BI REST API를 통해 가능합니다.
+
+✅ 1. 내 작업 영역의 권한 확인 (me/permissions API)
+
+내 작업 영역에서 현재 계정이 가진 권한을 조회하려면 다음 API를 호출하면 됩니다.
+
+curl -X GET "https://api.powerbi.com/v1.0/myorg/me/permissions" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json"
+
+🔹 응답 예시
+
+{
+  "value": [
+    {
+      "name": "View",
+      "hasPermission": true
+    },
+    {
+      "name": "Create",
+      "hasPermission": true
+    },
+    {
+      "name": "Delete",
+      "hasPermission": false
+    },
+    {
+      "name": "Share",
+      "hasPermission": true
+    }
+  ]
+}
+
+	•	"View": true → 조회(읽기) 권한 있음 (Report.Read.All이 정상 작동하는지 확인 가능)
+	•	"Create": true → 새 보고서 생성 가능
+	•	"Delete": false → 보고서 삭제 불가능
+	•	"Share": true → 공유 가능
+
+✅ 이 응답을 확인하면 현재 계정이 “내 작업 영역”에서 가질 수 있는 권한을 알 수 있음.
+
+✅ 2. 현재 계정의 모든 권한 확인 (me API)
+
+현재 로그인한 계정의 전반적인 정보 및 권한을 조회하려면 Microsoft Graph API 또는 Power BI API를 호출할 수도 있습니다.
+
+curl -X GET "https://graph.microsoft.com/v1.0/me" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json"
+
+✔ 이 API를 호출하면, 현재 로그인한 사용자 계정(Azure AD 계정)의 정보가 반환됨.
+✔ 조직에서 부여된 권한(Azure AD 설정 확인용)도 함께 볼 수 있음.
+
+✅ 3. 내 작업 영역의 보고서 목록 확인 (reports API)
+
+현재 계정이 “내 작업 영역”에서 접근 가능한 보고서가 있는지 확인하려면:
+
+curl -X GET "https://api.powerbi.com/v1.0/myorg/reports" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json"
+
+✔ 응답이 빈 배열([])이면, 내 작업 영역에 보고서가 없거나, Report.Read.All 권한이 없는 것일 가능성이 높음.
+
+✅ 결론
+	•	내 작업 영역(My Workspace)에서의 권한을 확인하려면 me/permissions API 사용.
+	•	현재 로그인한 계정의 권한 확인은 graph.microsoft.com/v1.0/me API를 활용.
+	•	보고서 목록을 조회하려면 reports API를 호출하여 실제 접근 가능 여부 확인.
+
+👉 위 명령어를 차례로 실행하면 현재 계정이 내 작업 영역에서 어떤 권한을 가졌는지 확실하게 확인할 수 있음! 🚀
+
+
+섹섹보
 curl -X GET "https://graph.microsoft.com/v1.0/me" \
   -H "Authorization: Bearer {access_token}" \
   -H "Content-Type: application/json"

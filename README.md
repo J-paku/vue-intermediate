@@ -1,3 +1,7 @@
+curl -X GET "https://graph.microsoft.com/v1.0/me" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json"
+
 Graph API의 로그인 정보를 사용하여 Power BI에 접근할 수 있는지 확인해 보겠습니다.
 
 가능 여부

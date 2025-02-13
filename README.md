@@ -1,3 +1,12 @@
+curl -X POST https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=device_code" \
+  -d "client_id={client_id}" \
+  -d "device_code={device_code}" \
+  -d "scope=https://api.powerbi.com/.default"
+
+
+
 4️⃣ 액세스 토큰이 Power BI API 범위를 포함하지 않는 경우
 
 현재 사용하는 액세스 토큰이 Power BI API에 대한 권한을 포함하지 않는 경우, API 호출이 실패할 수 있음.

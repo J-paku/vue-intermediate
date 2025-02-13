@@ -32,3 +32,12 @@ authorization_code 방식으로 사용하는 것이 해결책.
 
 http://localhost:3000/callback
 
+
+curl -X POST "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "grant_type=client_credentials" \
+    -d "client_id={client_id}" \
+    -d "client_secret={client_secret}" \
+    -d "scope=https://analysis.windows.net/powerbi/api/.default"
+
+

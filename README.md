@@ -27,5 +27,8 @@ scp 필드에 Workspace.Read.All / Report.Read.All 같은 Power BI API 권한이
 authorization_code 방식으로 사용하는 것이 해결책.
 
 ✅ 그래도 scp가 안 나오면?
-→ Application Permissions 문제일 가능성이 높음 → 3번 진행
+→ Application Permissions 문제일 가능성이 높음 → 3번 진행6
+
+
+http://localhost:3000/callback
 

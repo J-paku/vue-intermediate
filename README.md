@@ -79,4 +79,4 @@ for index, file in enumerate(file_links):
     driver.switch_to.window(driver.window_handles[0])
 
 # 10. 드라이버 종료
-driver.quit()
+driver.quit(
